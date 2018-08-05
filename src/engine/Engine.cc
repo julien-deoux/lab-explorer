@@ -1,4 +1,6 @@
 #include <cstdlib>
+#include <thread>
+#include <iostream>
 
 #include "renderer/OpenGLRenderer.h"
 #include "EngineException.h"
@@ -6,6 +8,18 @@
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
+
+static void renderLoop(GLFWwindow *window, LEEngine::Renderer *renderer, LEEngine::Scene *scene)
+{
+  glfwMakeContextCurrent(window);
+  while (!glfwWindowShouldClose(window))
+  {
+    renderer->render(scene);
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+  }
+}
 
 LEEngine::Engine::Engine(Game *g)
 {
@@ -47,16 +61,15 @@ void LEEngine::Engine::run()
     }
   }
 
-  while (!glfwWindowShouldClose(window))
+  std::thread renderThread (renderLoop, window, renderer, scene);
+
+  while(!glfwWindowShouldClose(window))
   {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(window, true);
-
-    renderer->render(scene);
-
-    glfwSwapBuffers(window);
-    glfwPollEvents();
   }
+
+  renderThread.join();
 
   free(scene->level);
   free(scene);
