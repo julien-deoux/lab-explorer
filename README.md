@@ -1,5 +1,5 @@
 # lab-explorer
-My attempt at building a 2D game engine from scratch
+An attempt at building a 2D metroid-like game engine from scratch
 
 ## Target features
 * Hardware accelerated rendering with OpenGL
@@ -7,12 +7,13 @@ My attempt at building a 2D game engine from scratch
 * Realtime shadows
 * Physics
 * Level management (import, edit...)
+* Sound management
 
 ## Requirements
 * GLFW 3
 
 ## Build
-Until an actual build system is properly set up, just execute the following command:
+Until an actual build system is properly set up, just execute the following script:
 ```
-g++ -std=c++11 src/main.cc src/engine/*.cc -lglfw
+./build.sh
 ```

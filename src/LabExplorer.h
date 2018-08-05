@@ -3,7 +3,7 @@
 
 #include "engine/game/Game.h"
 
-class LabExplorer : public Game
+class LabExplorer : public LEEngine::Game
 {
 public:
   const char *getName()

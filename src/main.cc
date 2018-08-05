@@ -1,4 +1,5 @@
 #include <iostream>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "engine/Engine.h"
@@ -6,19 +7,19 @@
 
 int main(int argc, char const *argv[])
 {
-  Game *labExplorer;
-  Engine *engine;
   try
   {
-    labExplorer = new LabExplorer();
-    engine = new Engine(labExplorer);
+    LEEngine::Game *labExplorer = new LabExplorer();
+    LEEngine::Engine *engine = new LEEngine::Engine(labExplorer);
+
+    engine->run();
+
+    delete engine;
   }
-  catch(const std::exception& e)
+  catch (const std::exception &e)
   {
     std::cerr << e.what() << '\n';
   }
-
-  engine->run();
 
   return 0;
 }

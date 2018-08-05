@@ -1,13 +1,13 @@
-#include <GLFW/glfw3.h>
+#include <cstdlib>
 
+#include "renderer/OpenGLRenderer.h"
 #include "EngineException.h"
-#include "game/Game.h"
 #include "Engine.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
-Engine::Engine(Game *g)
+LEEngine::Engine::Engine(Game *g)
 {
   game = g;
   glfwInit();
@@ -19,23 +19,45 @@ Engine::Engine(Game *g)
   if (window == NULL)
   {
     glfwTerminate();
-    throw new EngineException("Failed to create GLFW window");
+    throw EngineException("Failed to create GLFW window");
   }
   glfwMakeContextCurrent(window);
+  renderer = new OpenGLRenderer(window);
 }
 
-Engine::~Engine()
+LEEngine::Engine::~Engine()
 {
   glfwTerminate();
 }
 
-void Engine::run() {
+void LEEngine::Engine::run()
+{
+  scene = (Scene *)malloc(sizeof(Scene));
+  scene->level = (Level *)malloc(sizeof(Level));
+  scene->level->tiles = new std::list<Tile>;
+
+  scene->player = (Player *)malloc(sizeof(Player));
+  *scene->player = {4, 6};
+
+  for (int i = 0; i < 16; i++)
+  {
+    for (int j = 0; j < 16; j++)
+    {
+      scene->level->tiles->push_front({i, j, (j < 2 || j > 14 || i < 2 || i > 14) ? TERRAIN : BACKGROUND});
+    }
+  }
+
   while (!glfwWindowShouldClose(window))
   {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(window, true);
 
+    renderer->render(scene);
+
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
+
+  free(scene->level);
+  free(scene);
 }

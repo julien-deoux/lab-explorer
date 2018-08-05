@@ -3,6 +3,9 @@
 
 #include <exception>
 
+namespace LEEngine
+{
+
 class EngineException : public std::exception
 {
 private:
@@ -12,5 +15,7 @@ public:
   EngineException(const char *msg);
   virtual const char *what() const throw();
 };
+
+} // namespace LEEngine
 
 #endif

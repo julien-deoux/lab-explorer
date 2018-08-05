@@ -1,14 +1,17 @@
-#include <sstream>
+#include <cstring>
+#include <string>
+
 #include "EngineException.h"
 
-EngineException::EngineException(const char *msg)
+LEEngine::EngineException::EngineException(const char *msg)
 {
   message = msg;
 }
 
-const char *EngineException::what() const throw()
+const char *LEEngine::EngineException::what() const throw()
 {
-  std::stringstream result;
-  result << "Engine exception: " << message;
-  return result.str().c_str();
+  std::string fullMsg = std::string("Engine exception: ") + message;
+  char *result = new char[fullMsg.length() + 1];
+  std::strcpy(result, fullMsg.c_str());
+  return result;
 }
