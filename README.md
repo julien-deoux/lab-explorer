@@ -11,6 +11,7 @@ An attempt at building a 2D metroid-like game engine from scratch
 
 ## Requirements
 * GLFW 3
+* Box2D
 
 ## Build
 Until an actual build system is properly set up, just execute the following script:

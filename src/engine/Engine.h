@@ -3,6 +3,7 @@
 
 #include <GLFW/glfw3.h>
 #include "renderer/Renderer.h"
+#include "physics/Simulation.h"
 #include "game/Game.h"
 #include "logic/Scene.h"
 
@@ -16,6 +17,7 @@ private:
   Game *game;
   Scene *scene;
   Renderer *renderer;
+  Simulation *simulation;
 
 public:
   Engine(Game *g);

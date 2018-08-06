@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <thread>
 #include <iostream>
+#include <chrono>
 
 #include "renderer/OpenGLRenderer.h"
 #include "EngineException.h"
@@ -18,6 +19,16 @@ static void renderLoop(GLFWwindow *window, LEEngine::Renderer *renderer, LEEngin
 
     glfwSwapBuffers(window);
     glfwPollEvents();
+  }
+}
+
+static void physicsLoop(GLFWwindow *window, LEEngine::Simulation *simulation)
+{
+  glfwMakeContextCurrent(window);
+  while (!glfwWindowShouldClose(window))
+  {
+    int timeStep = simulation->run();
+    std::this_thread::sleep_for(std::chrono::milliseconds(timeStep));
   }
 }
 
@@ -57,20 +68,25 @@ void LEEngine::Engine::run()
   {
     for (int j = 0; j < 16; j++)
     {
-      scene->level->tiles->push_front({i, j, (j < 2 || j > 14 || i < 2 || i > 14) ? TERRAIN : BACKGROUND});
+      scene->level->tiles->push_front({(float)i, (float)j, (j < 2 || j > 14 || i < 2 || i > 14) ? TERRAIN : BACKGROUND});
     }
   }
 
-  std::thread renderThread (renderLoop, window, renderer, scene);
+  simulation = new Simulation(scene);
 
-  while(!glfwWindowShouldClose(window))
+  std::thread renderThread(renderLoop, window, renderer, scene);
+  std::thread physicsThread(physicsLoop, window, simulation);
+
+  while (!glfwWindowShouldClose(window))
   {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(window, true);
   }
 
   renderThread.join();
+  physicsThread.join();
 
+  delete simulation;
   free(scene->level);
   free(scene);
 }

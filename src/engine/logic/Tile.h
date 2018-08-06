@@ -10,7 +10,7 @@ typedef enum {
 
 typedef struct
 {
-  int x, y;
+  float x, y;
   TileType type;
 } Tile;
 

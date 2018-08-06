@@ -6,7 +6,7 @@ namespace LEEngine
 
 typedef struct
 {
-  int x, y;
+  float x, y;
 } Player;
 
 } // namespace LEEngine

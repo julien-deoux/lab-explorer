@@ -1,6 +1,6 @@
 #include <list>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "../../glm/gtc/type_ptr.hpp"
+#include "../../glm/gtc/matrix_transform.hpp"
 #include <iostream>
 
 #include "OpenGLRenderer.h"
@@ -73,15 +73,12 @@ void LEEngine::OpenGLRenderer::render(Scene *scene)
   float tileSize = 32.0f;
   float height = viewportDimensions[3] / tileSize;
   float width = viewportDimensions[2] / tileSize;
-  glm::mat4 projection = glm::ortho(- width / 2, width / 2, - height / 2, height / 2, 1.0f, 5.0f);
+  glm::mat4 projection = glm::ortho(-width / 2, width / 2, -height / 2, height / 2, 1.0f, 5.0f);
   flatShader->setMat4("projection", projection);
 
-  std::list<Tile>::iterator tile = scene->level->tiles->begin();
-
-  while (tile != scene->level->tiles->end())
+  for (Tile tile : *scene->level->tiles)
   {
-    render(*tile);
-    tile++;
+    render(tile);
   }
 
   render(*scene->player);
@@ -109,7 +106,6 @@ void LEEngine::OpenGLRenderer::render(Tile tile)
 
   glm::mat4 model = glm::mat4(1.0f);
   model = glm::translate(model, glm::vec3((float)tile.x, (float)tile.y, 0.0f));
-
   flatShader->setMat4("model", model);
 
   glBindVertexArray(tileVAO);

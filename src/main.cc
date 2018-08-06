@@ -1,7 +1,6 @@
 #include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
+#include "glad/glad.h"
 #include "engine/Engine.h"
 #include "LabExplorer.h"
 
