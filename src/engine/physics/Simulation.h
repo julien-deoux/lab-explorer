@@ -5,7 +5,7 @@
 #include <list>
 #include "PhysicalBody.h"
 #include "DynamicBody.h"
-#include "../logic/Scene.h"
+#include "../game/Scene.h"
 
 namespace LEEngine
 {

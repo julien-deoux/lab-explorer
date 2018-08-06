@@ -32,15 +32,14 @@ static void physicsLoop(GLFWwindow *window, LEEngine::Simulation *simulation)
   }
 }
 
-LEEngine::Engine::Engine(Game *g)
+LEEngine::Engine::Engine()
 {
-  game = g;
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, game->getName(), NULL, NULL);
+  window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "LabExplorer", NULL, NULL);
   if (window == NULL)
   {
     glfwTerminate();

@@ -1,7 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "../logic/Scene.h"
+#include "../game/Scene.h"
 
 namespace LEEngine
 {

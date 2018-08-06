@@ -4,8 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "renderer/Renderer.h"
 #include "physics/Simulation.h"
-#include "game/Game.h"
-#include "logic/Scene.h"
+#include "game/Scene.h"
 
 namespace LEEngine
 {
@@ -14,13 +13,12 @@ class Engine
 {
 private:
   GLFWwindow *window;
-  Game *game;
   Scene *scene;
   Renderer *renderer;
   Simulation *simulation;
 
 public:
-  Engine(Game *g);
+  Engine();
   ~Engine();
   void run();
 };

@@ -2,14 +2,12 @@
 
 #include "glad/glad.h"
 #include "engine/Engine.h"
-#include "LabExplorer.h"
 
 int main(int argc, char const *argv[])
 {
   try
   {
-    LEEngine::Game *labExplorer = new LabExplorer();
-    LEEngine::Engine *engine = new LEEngine::Engine(labExplorer);
+    LEEngine::Engine *engine = new LEEngine::Engine();
 
     engine->run();
 
