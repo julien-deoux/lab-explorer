@@ -21,6 +21,7 @@ public:
   Simulation(Scene *scene);
   ~Simulation();
   int run();
+  Vector getPlayerPosition();
 };
 
 } // namespace LEEngine

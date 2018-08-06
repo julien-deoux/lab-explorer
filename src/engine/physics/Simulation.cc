@@ -1,4 +1,5 @@
 #include "Simulation.h"
+
 #include <iostream>
 
 #define GRAVITY 10
@@ -11,11 +12,13 @@ LEEngine::Simulation::Simulation(Scene *s)
   player = new DynamicBody(simplePlayer->x, simplePlayer->y, 1.0f, 1.0f, 50.0f);
 
   for (Tile tile : *scene->level->tiles)
+  {
     if (tile.type == TERRAIN)
     {
       PhysicalBody body = {tile.x, tile.y, 1.0f, 1.0f};
       physicalBodies.push_front(body);
     }
+  }
 }
 
 LEEngine::Simulation::~Simulation()
@@ -34,8 +37,9 @@ int LEEngine::Simulation::run()
 
   player->displace(TIME_STEP);
 
-  scene->player->x = player->body.x;
-  scene->player->y = player->body.y;
-
   return (int)(TIME_STEP * 1000);
+}
+
+LEEngine::Vector LEEngine::Simulation::getPlayerPosition() {
+  return {player->body.x, player->body.y};
 }

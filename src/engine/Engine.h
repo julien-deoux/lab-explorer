@@ -13,9 +13,6 @@ class Engine
 {
 private:
   GLFWwindow *window;
-  Scene *scene;
-  Renderer *renderer;
-  Simulation *simulation;
 
 public:
   Engine();

@@ -11,10 +11,11 @@ void handleResize(GLFWwindow *window, int width, int height)
   glViewport(0, 0, width, height);
 }
 
-LEEngine::OpenGLRenderer::OpenGLRenderer(GLFWwindow *win)
+void LEEngine::OpenGLRenderer::initWindow(GLFWwindow *win)
 {
   window = win;
 
+  glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, handleResize);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -26,10 +27,18 @@ LEEngine::OpenGLRenderer::OpenGLRenderer(GLFWwindow *win)
   glfwGetWindowSize(window, &width, &height);
   glViewport(0, 0, width, height);
   glEnable(GL_DEPTH_TEST);
+
   flatShader = new Shader("data/shaders/v_flat.glsl", "data/shaders/f_single_color.glsl");
 
   initTileObjects();
 }
+
+LEEngine::OpenGLRenderer::OpenGLRenderer(GLFWwindow *win)
+{
+  initWindow(win);
+}
+
+LEEngine::OpenGLRenderer::OpenGLRenderer() {}
 
 LEEngine::OpenGLRenderer::~OpenGLRenderer()
 {

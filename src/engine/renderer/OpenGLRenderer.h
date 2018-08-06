@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include <GLFW/glfw3.h>
 #include "Renderer.h"
+#include "../threading/Thread.h"
 
 namespace LEEngine
 {
@@ -19,7 +20,9 @@ private:
   Shader *flatShader;
 public:
   OpenGLRenderer(GLFWwindow *win);
+  OpenGLRenderer();
   ~OpenGLRenderer();
+  void initWindow(GLFWwindow *win);
   void render(Scene *scene);
 };
 

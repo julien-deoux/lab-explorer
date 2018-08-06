@@ -6,31 +6,12 @@
 #include "renderer/OpenGLRenderer.h"
 #include "EngineException.h"
 #include "Engine.h"
+#include "threading/MessageBus.h"
+#include "threading/RenderingThread.h"
+#include "threading/PhysicsThread.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-
-static void renderLoop(GLFWwindow *window, LEEngine::Renderer *renderer, LEEngine::Scene *scene)
-{
-  glfwMakeContextCurrent(window);
-  while (!glfwWindowShouldClose(window))
-  {
-    renderer->render(scene);
-
-    glfwSwapBuffers(window);
-    glfwPollEvents();
-  }
-}
-
-static void physicsLoop(GLFWwindow *window, LEEngine::Simulation *simulation)
-{
-  glfwMakeContextCurrent(window);
-  while (!glfwWindowShouldClose(window))
-  {
-    int timeStep = simulation->run();
-    std::this_thread::sleep_for(std::chrono::milliseconds(timeStep));
-  }
-}
 
 LEEngine::Engine::Engine()
 {
@@ -45,8 +26,6 @@ LEEngine::Engine::Engine()
     glfwTerminate();
     throw EngineException("Failed to create GLFW window");
   }
-  glfwMakeContextCurrent(window);
-  renderer = new OpenGLRenderer(window);
 }
 
 LEEngine::Engine::~Engine()
@@ -56,7 +35,7 @@ LEEngine::Engine::~Engine()
 
 void LEEngine::Engine::run()
 {
-  scene = (Scene *)malloc(sizeof(Scene));
+  Scene *scene = (Scene *)malloc(sizeof(Scene));
   scene->level = (Level *)malloc(sizeof(Level));
   scene->level->tiles = new std::list<Tile>;
 
@@ -71,21 +50,39 @@ void LEEngine::Engine::run()
     }
   }
 
-  simulation = new Simulation(scene);
+  MessageBus messageBus;
 
-  std::thread renderThread(renderLoop, window, renderer, scene);
-  std::thread physicsThread(physicsLoop, window, simulation);
+  RenderingThread renderingThread;
+  PhysicsThread physicsThread;
+
+  std::thread rThread([&]() { renderingThread.callback(messageBus); });
+  std::thread pThread([&]() { physicsThread.callback(messageBus); });
+
+  messageBus.physicsQueue.push({P_SET_WINDOW, window});
+  messageBus.physicsQueue.push({P_SET_SCENE, scene});
+  messageBus.renderingQueue.push({R_SET_WINDOW, window});
+  messageBus.renderingQueue.push({R_SET_SCENE, scene});
 
   while (!glfwWindowShouldClose(window))
   {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(window, true);
+    if (!messageBus.mainQueue.empty())
+    {
+      Message<MainHead> message = messageBus.mainQueue.front();
+      if (message.head == G_PLAYER_POSITION)
+      {
+        float *playerPosition = (float *)message.data;
+        scene->player->x = playerPosition[0];
+        scene->player->y = playerPosition[1];
+      }
+      messageBus.mainQueue.pop();
+    }
   }
 
-  renderThread.join();
-  physicsThread.join();
+  rThread.join();
+  pThread.join();
 
-  delete simulation;
   free(scene->level);
   free(scene);
 }
