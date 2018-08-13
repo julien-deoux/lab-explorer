@@ -9,6 +9,7 @@
 #include "threading/MessageBus.h"
 #include "threading/RenderingThread.h"
 #include "threading/PhysicsThread.h"
+#include "threading/InputThread.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -46,7 +47,7 @@ void LEEngine::Engine::run()
   {
     for (int j = 0; j < 16; j++)
     {
-      scene->level->tiles->push_front({(float)i, (float)j, (j < 2 || j > 14 || i < 2 || i > 14) ? TERRAIN : BACKGROUND});
+      scene->level->tiles->push_front({(float)i, (float)j, (j < 2 || j > 13 || i < 2 || i > 13) ? TERRAIN : BACKGROUND});
     }
   }
 
@@ -54,19 +55,20 @@ void LEEngine::Engine::run()
 
   RenderingThread renderingThread;
   PhysicsThread physicsThread;
+  InputThread inputThread;
 
   std::thread rThread([&]() { renderingThread.callback(messageBus); });
   std::thread pThread([&]() { physicsThread.callback(messageBus); });
+  std::thread iThread([&]() { inputThread.callback(messageBus); });
 
   messageBus.physicsQueue.push({P_SET_WINDOW, window});
   messageBus.physicsQueue.push({P_SET_SCENE, scene});
   messageBus.renderingQueue.push({R_SET_WINDOW, window});
   messageBus.renderingQueue.push({R_SET_SCENE, scene});
+  messageBus.inputQueue.push({I_SET_WINDOW, window});
 
   while (!glfwWindowShouldClose(window))
   {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-      glfwSetWindowShouldClose(window, true);
     if (!messageBus.mainQueue.empty())
     {
       Message<MainHead> message = messageBus.mainQueue.front();
@@ -82,6 +84,7 @@ void LEEngine::Engine::run()
 
   rThread.join();
   pThread.join();
+  iThread.join();
 
   free(scene->level);
   free(scene);

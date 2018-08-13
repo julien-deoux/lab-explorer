@@ -2,7 +2,7 @@
 #define RENDERERTHREAD_H
 
 #include "Thread.h"
-#include "../renderer/OpenGLRenderer.h"
+#include "../renderer/Renderer.h"
 
 namespace LEEngine
 {
@@ -10,7 +10,7 @@ namespace LEEngine
 class RenderingThread : public Thread
 {
 private:
-  OpenGLRenderer *renderer;
+  Renderer *renderer;
 public:
   void callback(MessageBus &messageBus);
 };

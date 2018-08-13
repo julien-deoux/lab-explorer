@@ -20,6 +20,15 @@ void LEEngine::PhysicsThread::callback(MessageBus &messageBus)
       case P_SET_WINDOW:
         window = (GLFWwindow *)message.data;
         break;
+      case P_WALK_LEFT:
+        simulation->walk(LEFT);
+        break;
+      case P_WALK_RIGHT:
+        simulation->walk(RIGHT);
+        break;
+      case P_JUMP:
+        simulation->jump();
+        break;
       case P_SET_SCENE:
         if (simulation != nullptr)
           delete simulation;

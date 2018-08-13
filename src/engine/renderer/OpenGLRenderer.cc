@@ -48,11 +48,11 @@ LEEngine::OpenGLRenderer::~OpenGLRenderer()
 void LEEngine::OpenGLRenderer::initTileObjects()
 {
   const float tileVertices[18] = {
-      -1.0f, -1.0f, 0.0f,
-      -1.0f, 1.0f, 0.0f,
-      1.0f, -1.0f, 0.0f,
-      -1.0f, 1.0f, 0.0f,
-      1.0f, -1.0f, 0.0f,
+      0.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f,
+      1.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f,
+      1.0f, 0.0f, 0.0f,
       1.0f, 1.0f, 0.0f};
   glGenVertexArrays(1, &tileVAO);
   glGenBuffers(1, &tileVBO);
@@ -95,12 +95,11 @@ void LEEngine::OpenGLRenderer::render(Scene *scene)
 
 void LEEngine::OpenGLRenderer::render(Player player)
 {
-  flatShader->use();
   flatShader->setVec3("color", glm::vec3(1.0f, 0.0f, 0.0f));
 
   glm::mat4 model = glm::mat4(1.0f);
-  model = glm::translate(model, glm::vec3((float)player.x, (float)player.y, 1.0f));
-
+  model = glm::translate(model, glm::vec3(player.x, player.y, 1.0f));
+  model = glm::scale(model, glm::vec3(1.0f, 2.0f, 1.0f));
   flatShader->setMat4("model", model);
 
   glBindVertexArray(tileVAO);
@@ -109,12 +108,11 @@ void LEEngine::OpenGLRenderer::render(Player player)
 
 void LEEngine::OpenGLRenderer::render(Tile tile)
 {
-  flatShader->use();
   float greyShade = tile.type == TERRAIN ? 0.5f : 0.8f;
   flatShader->setVec3("color", glm::vec3(greyShade));
 
   glm::mat4 model = glm::mat4(1.0f);
-  model = glm::translate(model, glm::vec3((float)tile.x, (float)tile.y, 0.0f));
+  model = glm::translate(model, glm::vec3(tile.x, tile.y, 0.0f));
   flatShader->setMat4("model", model);
 
   glBindVertexArray(tileVAO);

@@ -7,6 +7,7 @@ namespace LEEngine
 typedef struct
 {
   float x, y, w, h;
+  float friction;
 } PhysicalBody;
 
 } // namespace LEEngine

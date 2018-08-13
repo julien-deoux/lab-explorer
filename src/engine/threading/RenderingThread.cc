@@ -1,7 +1,8 @@
+#include "../renderer/OpenGLRenderer.h"
 #include "RenderingThread.h"
 #include "../game/Scene.h"
-#include <GLFW/glfw3.h>
 #include "RenderingHead.h"
+#include <GLFW/glfw3.h>
 
 void LEEngine::RenderingThread::callback(MessageBus &messageBus)
 {
@@ -44,6 +45,4 @@ void LEEngine::RenderingThread::callback(MessageBus &messageBus)
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
-
-  delete renderer;
 }

@@ -1,20 +1,23 @@
 #include "DynamicBody.h"
-#include <iostream>
 #include <algorithm>
 
-bool inRange(float x, float min, float range)
+#define EPSILON 0.001f
+
+bool willCollide(float pos, float displacement, float border)
 {
-  return x > min && min + range > x;
+  return (pos <= border + EPSILON && pos + displacement >= border - EPSILON) ||
+  (pos >= border - EPSILON && pos + displacement <= border + EPSILON);
 }
 
 bool overlap(float start, float width, float min, float range)
 {
-  return !(start > min + range || start + width < min);
+  return !(start >= min + range || start + width <= min);
 }
 
 LEEngine::DynamicBody::DynamicBody(float x, float y, float w, float h, float m)
 {
   body = {x, y, w, h};
+  onGround = false;
   mass = m;
   dx = 0.0;
   dy = 0.0;
@@ -55,17 +58,22 @@ void LEEngine::DynamicBody::cancelForces(Direction direction)
   }
 }
 
-void LEEngine::DynamicBody::collide(PhysicalBody staticBody)
+void LEEngine::DynamicBody::collide(PhysicalBody staticBody, float timeStep)
 {
   if (overlap(body.x, body.w, staticBody.x, staticBody.w))
   {
-    if (inRange(body.y, staticBody.y, staticBody.h))
+    if (std::abs(staticBody.y + staticBody.h - body.y) <= EPSILON)
+    {
+      onGround = true;
+      applyForce(-staticBody.friction*dx, 0.0f);
+    }
+    if (willCollide(body.y, dy * timeStep, staticBody.y + staticBody.h))
     {
       body.y = staticBody.y + staticBody.h;
       dy = std::max(dy, 0.0f);
       cancelForces(DOWN);
     }
-    if (inRange(staticBody.y, body.y, body.h))
+    if (willCollide(body.y + body.h, dy * timeStep, staticBody.y))
     {
       body.y = staticBody.y - body.h;
       dy = std::min(dy, 0.0f);
@@ -74,13 +82,13 @@ void LEEngine::DynamicBody::collide(PhysicalBody staticBody)
   }
   if (overlap(body.y, body.h, staticBody.y, staticBody.h))
   {
-    if (inRange(body.x, staticBody.x, staticBody.w))
+    if (willCollide(body.x, dx * timeStep, staticBody.x + staticBody.w))
     {
       body.x = staticBody.x + staticBody.w;
       dx = std::max(dx, 0.0f);
       cancelForces(LEFT);
     }
-    if (inRange(staticBody.x, body.x, body.w))
+    if (willCollide(body.x + body.w, dx * timeStep, staticBody.x))
     {
       body.x = staticBody.x - body.w;
       dx = std::min(dx, 0.0f);

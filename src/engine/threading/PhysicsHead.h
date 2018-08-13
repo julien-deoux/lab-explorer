@@ -7,7 +7,10 @@ namespace LEEngine
 typedef enum
 {
   P_SET_WINDOW,
-  P_SET_SCENE
+  P_SET_SCENE,
+  P_WALK_LEFT,
+  P_WALK_RIGHT,
+  P_JUMP
 } PhysicsHead;
 }
 

@@ -22,6 +22,8 @@ public:
   ~Simulation();
   int run();
   Vector getPlayerPosition();
+  void walk(Direction direction);
+  void jump();
 };
 
 } // namespace LEEngine
