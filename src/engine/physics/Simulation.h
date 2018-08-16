@@ -1,7 +1,6 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include <Box2D/Box2D.h>
 #include <list>
 #include "PhysicalBody.h"
 #include "DynamicBody.h"
